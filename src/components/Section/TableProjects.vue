@@ -1,7 +1,10 @@
 <template>
   <!-- Recent Orders Table -->
   <section
-    :class="[projects.length > 0 ? 'h-auto' : 'h-screen', 'py-8 px-4 sm:px-2']"
+    :class="[
+      visibleItems.length > 0 ? 'h-auto' : 'h-screen',
+      'py-8 px-4 sm:px-2',
+    ]"
   >
     <div class="w-full mx-auto">
       <h2 class="text-2xl font-semibold text-gray-900 mb-6">
@@ -52,7 +55,7 @@
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
               <tr
-                v-for="project in projects"
+                v-for="project in visibleItems"
                 :key="project.id"
                 class="hover:bg-gray-50 transition-colors duration-200"
                 :class="[
@@ -135,6 +138,20 @@
           </table>
         </div>
       </div>
+      <div class="flex justify-end items-center mt-4 gap-4">
+        <button
+          @click="prevPage"
+          class="px-3 py-2 rounded-md text-sm font-medium bg-gray-200 hover:bg-gray-300 transition duration-150 ease-in-out"
+        >
+          Prev
+        </button>
+        <button
+          @click="nextPage"
+          class="px-3 py-2 rounded-md text-sm font-medium bg-gray-200 hover:bg-gray-300 transition duration-150 ease-in-out"
+        >
+          Next
+        </button>
+      </div>
     </div>
   </section>
 </template>
@@ -144,9 +161,31 @@ import { getProjectTypeClass, getStatusClass } from "@/services/data.service";
 import useProyectStore from "@/store/proyectStore";
 import { storeToRefs } from "pinia";
 import { TypeProyects } from "@/entitis/entitis";
+import { computed, ref } from "vue";
 
 const adminStore = useProyectStore();
 const { projects } = storeToRefs(adminStore);
+
+const page = ref(1);
+const itemsPerPage = 6;
+
+const visibleItems = computed(() => {
+  const startIndex = (page.value - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  return projects.value.slice(startIndex, endIndex);
+});
+
+const nextPage = () => {
+  if (page.value * itemsPerPage < projects.value.length) {
+    page.value++;
+  }
+};
+
+const prevPage = () => {
+  if (page.value > 1) {
+    page.value--;
+  }
+};
 
 const handleClickState = async (project: TypeProyects) => {
   const { status, id } = project;
