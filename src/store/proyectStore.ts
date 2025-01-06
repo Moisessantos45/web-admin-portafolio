@@ -84,18 +84,18 @@ const useProyectStore = defineStore("projectData", () => {
 
   const updateProject = async (proyect: { [key: string]: any }, id: string) => {
     try {
-      const mappedJsonProjects = Object.keys(proyect).map((key: string) =>
-        convertToJson(proyect[key])
-      );
-
+      const mappedJsonProjects = mapObjectToJson(proyect);
+      console.log(mappedJsonProjects, id);
       const { error } = await supabase
-        .from("Proyects")
+        .from("Proyectos")
         .update(mappedJsonProjects)
-        .eq("id", id);
+        .eq("id", id)
+        .select("*");
       if (error) throw error;
 
       showToastNotification("Project success creadt", true);
     } catch (error) {
+      console.log(error);
       ErrorHandler(error);
     }
   };
