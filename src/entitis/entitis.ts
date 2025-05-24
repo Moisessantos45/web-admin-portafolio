@@ -71,6 +71,7 @@ interface TypeProyects {
   description: string;
   tecnologies: string[];
   characteristics: string[];
+  learning: string[];
   image: string;
   imagenesProyect: string[];
   link: string;
@@ -96,6 +97,10 @@ interface ProjectFormData {
     value: string[];
   };
   characteristics: {
+    isModified: boolean;
+    value: string[];
+  };
+  learning: {
     isModified: boolean;
     value: string[];
   };
